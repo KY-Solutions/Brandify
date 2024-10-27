@@ -37,9 +37,9 @@ class UserController {
             //* request OTP from the service layer
             const emailOTP = await UserService.generateEmailOTP(email);
             //* send OTP to verify email
-            sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
+            await sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
             
-            return res.status(201).json({ success: true, message: 'User created successfully.',token ,data: newUser });
+            return res.status(201).json({ success: true, message: 'User created successfully.',token ,data: [newUser.name,newUser.email,newUser._id] });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -230,6 +230,9 @@ class UserController {
 
         try {
             const user = await UserService.findUserByEmail(email);
+            if (user.isUserVerified) {
+               return res.status(400).json({ success: false, message: 'Email already verified, please login' });
+            }
             const emailOTP = await UserService.generateEmailOTP(email);
             sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
             res.status(200).json({ success: true, message: 'Email verification sent, please check your inbox' });
