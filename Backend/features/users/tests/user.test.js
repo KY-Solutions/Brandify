@@ -15,7 +15,6 @@ dotenv.config();
 
 let testUser; 
 let userToBeDeletedId;
-let adminUser;
 
 beforeAll(async () => {
     const url = process.env.MONGO_URL;
@@ -55,6 +54,8 @@ describe('User API', () => {
     describe('Authentication', () => {
         //* Test for registering a new user
         it('should create a new user', async () => {
+
+            sendEmail.mockResolvedValueOnce(); //* mock email
             const res = await request(app).post('/users/register').send({
                 name: 'Testuser2',
                 email: 'testuser2@example.com',
@@ -62,11 +63,20 @@ describe('User API', () => {
             });
             expect(res.statusCode).toEqual(201);
             expect(res.body.success).toBe(true);
-            expect(res.body.data.name).toBe('Testuser2');
-            expect(res.body.data.email).toBe('testuser2@example.com');
+            expect(res.body.data[0]).toBe('Testuser2');
+            expect(res.body.data[1]).toBe('testuser2@example.com');
             expect(res.body).toHaveProperty('token');
-            userToBeDeletedId = res.body.data._id;
+
+            userToBeDeletedId = res.body.data[2];
+
+            //* check if the email was sent
+            expect(sendEmail).toHaveBeenCalledWith(
+                'testuser2@example.com',
+                expect.any(String),
+                expect.any(String)
+            );
         });
+
         //* Test for registering a user with an existing email
         it('should return 400 for registering a user with an existing email', async () => {
             const res = await request(app).post('/users/register').send({
@@ -124,7 +134,7 @@ describe('User API', () => {
             resetToken = res.body.token;
             
             //* ensuring that the sendEmail function was called
-            expect(sendEmail).toHaveBeenCalledTimes(1);
+            expect(sendEmail).toHaveBeenCalledTimes(2);
             expect(sendEmail).toHaveBeenCalledWith(
                 'testuser2@example.com',
                 expect.any(String), // email subject

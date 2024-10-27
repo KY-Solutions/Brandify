@@ -34,7 +34,12 @@ class UserController {
             const newUser = await UserService.createUser(name, email, password);
             //* generate the JWT 
             const token = tokenUtil.generateToken(newUser._id);
-            res.status(201).json({ success: true, message: 'User created successfully.',token ,data: newUser });
+            //* request OTP from the service layer
+            const emailOTP = await UserService.generateEmailOTP(email);
+            //* send OTP to verify email
+            await sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
+            
+            return res.status(201).json({ success: true, message: 'User created successfully.',token ,data: [newUser.name,newUser.email,newUser._id] });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -140,6 +145,11 @@ class UserController {
             res.status(500).json({ success: false, message: error.message });
         }
     }
+    //* [Method] controller method reset the user password
+    //* [400] bad request
+    //* [200] ok
+    //* [500] internal server error
+
 
     static async resetPassword(req, res) {
         const { newPassword } = req.body;
@@ -164,6 +174,10 @@ class UserController {
 
         }
     }
+    //* [Method] controller method to get all users
+    //* [200] ok
+    //* [500] internal server error
+
 
     static async getUsers(req, res) {
         const { page = 1, limit = 10 } = req.query;
@@ -171,6 +185,58 @@ class UserController {
             const users = await UserService.getUsers(page, limit);
             const totalUsers = await User.countDocuments();
             res.status(200).json({ success: true, data: users, totalPages: Math.ceil(totalUsers / limit), currentPage: page });
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+
+        }
+    }
+    //* [Method] controller method to verify email verification OTP
+    //* [400] bad request
+    //* [408] expired
+    //* [200] ok
+    //* [500] internal server error
+
+
+    static async verifyEmailOTP(req, res) {
+        const { email, OTP } = req.body;
+        try {
+            const user = await UserService.findUserByEmail(email);
+            if (OTP != user.userVerificationOTP) {
+                res.status(400).json({ success: false, message: 'Incorrect verification code' });
+            }
+            if (OTP == user.userVerificationOTP && Date.now() > user.verificationOTPexpiresAt ) {
+                res.status(408).json({ success: false, message: 'verification Expired Please try again' });
+            }
+
+            user.userVerificationOTP = null;
+            user.verificationOTPexpiresAt = null;
+            user.isUserVerified = true;
+            await user.save();
+
+            res.status(200).json({ success: true, message: 'Email successfuly verified' });
+            
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+
+    }
+    //* [Method] controller method to resend email verification OTP
+    //* [200] ok
+    //* [500] internal server error
+
+    static async resendEmailVerificationOTP(req,res) {
+        const { email } = req.body;
+
+        try {
+            const user = await UserService.findUserByEmail(email);
+            if (user.isUserVerified) {
+               return res.status(400).json({ success: false, message: 'Email already verified, please login' });
+            }
+            const emailOTP = await UserService.generateEmailOTP(email);
+            sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
+            res.status(200).json({ success: true, message: 'Email verification sent, please check your inbox' });
+
 
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
