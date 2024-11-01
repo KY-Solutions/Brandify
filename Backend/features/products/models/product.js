@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
-        required: true,
+        required: false, //* temporary until the category schema is implemented
     },
     price: {
         type: Number,
@@ -45,10 +45,11 @@ const productSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
-    reviews: [{
-        type: mongoose.Schema.ObjectId,
-        ref: 'Review',
-    }],
+   reviews: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Review',
+    default: []
+},
 
 }, { timestamps: true, });
 
