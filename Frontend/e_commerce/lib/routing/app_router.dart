@@ -1,17 +1,16 @@
+import 'package:e_commerce/Authentication/presentation/views/Verify_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:e_commerce/providers/route_provider.dart';
 import 'package:e_commerce/presentation/views/logIn_screen.dart';
-import 'package:e_commerce/presentation/views/register_screen.dart';
+import 'package:e_commerce/Authentication/presentation/views/register_screen.dart';
 
-import 'package:e_commerce/presentation/views/password_change_screen.dart';
-import 'package:e_commerce/presentation/views/password_code_screen.dart';
-import 'package:e_commerce/presentation/views/password_reset_screen.dart';
-import 'package:e_commerce/presentation/views/verification_screen.dart';
+import 'package:e_commerce/Authentication/presentation/views/password_change_screen.dart';
+import 'package:e_commerce/Authentication/presentation/views/password_reset_screen.dart';
 
-import 'package:e_commerce/presentation/views/loading_screen.dart';
-import 'package:e_commerce/presentation/views/home_screen.dart';
+import 'package:e_commerce/Authentication/presentation/views/loading_screen.dart';
+import 'package:e_commerce/Authentication/presentation/views/home_screen.dart';
 
 // configures Gorouter to handle routing based on the current route state managed by the routenotifier class
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -21,16 +20,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/logIn',
     routes: [
       GoRoute(
-        path: '/change-password',
-        builder: (context, state) => PasswordChangeScreen(),
+        path: '/reset-password/:token',
+        builder: (context, state) {
+          final token = state.pathParameters['token']!;
+          return PasswordChangeScreen(token: token);
+        },
       ),
       GoRoute(
-        path: '/password-reset',
+        path: '/request-reset-password',
         builder: (context, state) => PasswordResetScreen(),
-      ),
-      GoRoute(
-        path: '/password-code',
-        builder: (context, state) => PasswordCodeScreen(),
       ),
       GoRoute(
         path: '/logIn',
@@ -41,10 +39,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => RegisterScreen(),
       ),
       GoRoute(
-        path: '/verify',
-        builder: (context, state) => VerificationScreen(),
-      ),
-      GoRoute(
         path: '/loading',
         builder: (context, state) => LoadingScreen(),
       ),
@@ -52,18 +46,30 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         builder: (context, state) => HomeScreen(),
       ),
+      GoRoute(
+        path: '/verify-code',
+        builder: (context, state) => VerifyScreen(),
+      ),
     ],
     debugLogDiagnostics: true,
     redirect: (context, state) {
+      // Check if the password was changed; if so, redirect to login
+      if (ref.read(routeNotifierProvider.notifier).passwordChanged) {
+        // Reset the flag so that it doesn't keep redirecting to login
+        ref.read(routeNotifierProvider.notifier).passwordChanged = false;
+        return '/logIn';
+      }
+      // Check if the current path starts with '/reset-password' to avoid redirection
+      if (state.uri.path.startsWith('/reset-password')) {
+        return null; // Don't redirect, allow access to reset-password route
+      }
       switch (route) {
         case AppRoute.passwordChange:
-          return '/change-password';
-        case AppRoute.verification:
-          return '/verify';
-        case AppRoute.passwordcode:
-          return '/password-code';
+          final token =
+              state.pathParameters['token'] ?? ''; // default if no token
+          return '/reset-password/$token';
         case AppRoute.passwordReset:
-          return '/password-reset';
+          return '/request-reset-password';
         case AppRoute.register:
           return '/register';
         case AppRoute.logIn:
@@ -72,6 +78,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/home';
         case AppRoute.loading:
           return '/loading';
+        case AppRoute.VerifyCode:
+          return '/verify-code';
         default:
           return '/logIn';
       }

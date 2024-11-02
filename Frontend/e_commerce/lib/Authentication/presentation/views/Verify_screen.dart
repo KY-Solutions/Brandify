@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_commerce/providers/route_provider.dart';
-import 'package:e_commerce/notifiers/sign_in_notifier.dart';
+import 'package:e_commerce/Authentication/notifiers/sign_in_notifier.dart';
 
-class PasswordCodeScreen extends ConsumerWidget {
-  PasswordCodeScreen({super.key});
+class VerifyScreen extends ConsumerWidget {
+  VerifyScreen({super.key});
   final List<TextEditingController> controllers =
-      List.generate(4, (_) => TextEditingController());
+      List.generate(6, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final signInNotifier = ref.read(signInNotifierProvider.notifier);
     final signInState = ref.watch(signInNotifierProvider);
+
     final goRouteNotifier = ref.read(routeNotifierProvider.notifier);
 
     return Scaffold(
@@ -45,7 +46,7 @@ class PasswordCodeScreen extends ConsumerWidget {
             // Code Input Field
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (index) {
+              children: List.generate(6, (index) {
                 return SizedBox(
                   width: 50,
                   child: TextField(
@@ -81,9 +82,8 @@ class PasswordCodeScreen extends ConsumerWidget {
                       return controller.text;
                     },
                   ).join('');
-
                   // Call the verifyResetCode method
-                  bool success = await signInNotifier.verifyResetCode(
+                  bool success = await signInNotifier.verifyOTPCode(
                     signInState.email,
                     verificationCode,
                   );
@@ -94,7 +94,7 @@ class PasswordCodeScreen extends ConsumerWidget {
                         content: Text('Verification successful!'),
                       ),
                     );
-                    goRouteNotifier.goTo(AppRoute.passwordChange);
+                    goRouteNotifier.goTo(AppRoute.home);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

@@ -2,17 +2,19 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import 'package:e_commerce/model/register_model.dart';
-import 'package:e_commerce/model/signin_user_model.dart';
+import 'package:e_commerce/Authentication/model/register_model.dart';
+import 'package:e_commerce/Authentication/model/signin_user_model.dart';
 
 const url = 'http://localhost:5000/';
 const registrationUrl = '${url}users/register';
 const logInUrl = '${url}users/login';
 const verificationUrl = '${url}users/check-verification';
 const resendVerificationUrl = '${url}users/resend-verification';
-const requestResetCodeUrl = '${url}users/request-reset-code';
+const requestResetCodeUrl = '${url}users/request-password-reset';
 const verifyResetCodeUrl = '${url}users/verify-reset-code';
 const resetPasswordUrl = '${url}users/reset-password';
+const verifyCodeUrl = '${url}users/verify-email';
+const resendCodeUrl = '${url}users/resend-email-verification';
 
 class UserRepository {
   final http.Client _client;
@@ -29,7 +31,6 @@ class UserRepository {
         'name': user.name,
         'email': user.email,
         'password': user.password,
-        //'userId': user.userId,
       }),
     );
     String value = response.body;
@@ -58,11 +59,9 @@ class UserRepository {
     );
     final body = jsonDecode(response.body);
     print(response.statusCode);
+    print("test: " + body.toString());
     if (response.statusCode == 200) {
-      return SignInResponse(
-          success: true,
-          userId: body['user']['userId'],
-          name: body['user']['name']);
+      return SignInResponse(success: true, name: body['name']);
     } else if (response.statusCode == 404) {
       return SignInResponse(success: false, error: body['error']);
     } else if (response.statusCode == 401) {
@@ -74,12 +73,12 @@ class UserRepository {
     }
   }
 
-  Future<bool> checkEmailVerification(String userId) async {
+  Future<bool> checkEmailVerification(String email) async {
     final response = await _client.post(
       Uri.parse(verificationUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'userId': userId,
+        'email': email,
       }),
     );
 
@@ -87,12 +86,12 @@ class UserRepository {
     return body['isVerified'];
   }
 
-  Future<VerificationResponse> resendVerificationEmail(String userId) async {
+  Future<VerificationResponse> resendVerificationEmail(String email) async {
     final response = await _client.post(
       Uri.parse(resendVerificationUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'userId': userId,
+        'email': email,
       }),
     );
 
@@ -144,13 +143,50 @@ class UserRepository {
   }
 
   Future<VerificationResponse> resetPassword(
-      String email, String newPassword) async {
+      String email, String newPassword, String token) async {
     final response = await _client.post(
-      Uri.parse(resetPasswordUrl),
+      Uri.parse(resetPasswordUrl + "/" + token),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'newPassword': newPassword,
+      }),
+    );
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      return VerificationResponse(success: true, message: body['message']);
+    } else {
+      return VerificationResponse(success: false, message: body['message']);
+    }
+  }
+
+  Future<VerificationResponse> verifyOTPCode(String email, String otp) async {
+    print("r" + otp);
+    final otpAsNumber = int.parse(otp);
+    final response = await _client.post(
+      Uri.parse(verifyCodeUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'email': email,
-        'newPassword': newPassword,
+        'OTP': otpAsNumber,
+      }),
+    );
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      return VerificationResponse(success: true, message: body['message']);
+    } else {
+      print(body['message']);
+      return VerificationResponse(success: false, message: body['message']);
+    }
+  }
+
+  Future<VerificationResponse> resendOTPCode(String email) async {
+    final response = await _client.post(
+      Uri.parse(resendCodeUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
       }),
     );
     final body = jsonDecode(response.body);
@@ -173,10 +209,9 @@ class VerificationResponse {
 class SignInResponse {
   final bool success;
   final String? error;
-  final String? userId;
   final String? name;
 
-  SignInResponse({required this.success, this.error, this.userId, this.name});
+  SignInResponse({required this.success, this.error, this.name});
 }
 
 class RegistrationResponse {

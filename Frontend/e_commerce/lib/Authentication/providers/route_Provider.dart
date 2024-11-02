@@ -10,9 +10,9 @@ enum AppRoute {
   logIn,
   home,
   verification,
-  passwordcode,
   passwordReset,
   passwordChange,
+  VerifyCode,
 }
 
 class RouteNotifier extends Notifier<AppRoute> {
@@ -25,6 +25,12 @@ class RouteNotifier extends Notifier<AppRoute> {
   // method to change state
   void goTo(AppRoute route) {
     state = route;
+  }
+
+  bool passwordChanged = false;
+
+  void markPasswordChanged() {
+    passwordChanged = true;
   }
 }
 

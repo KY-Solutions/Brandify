@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_commerce/providers/route_provider.dart';
-import 'package:e_commerce/notifiers/sign_in_notifier.dart';
+import 'package:e_commerce/Authentication/notifiers/sign_in_notifier.dart';
 
 class LogInWidget extends ConsumerWidget {
   const LogInWidget({super.key});
@@ -24,7 +24,7 @@ class LogInWidget extends ConsumerWidget {
         child: Column(
           children: [
             Text(
-              'Login in',
+              'Login',
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 28,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_commerce/providers/route_provider.dart';
-import 'package:e_commerce/notifiers/sign_in_notifier.dart';
+import 'package:e_commerce/Authentication/notifiers/sign_in_notifier.dart';
 
 class PasswordResetScreen extends ConsumerWidget {
   PasswordResetScreen({super.key});
@@ -35,7 +35,7 @@ class PasswordResetScreen extends ConsumerWidget {
                     ),
               ),
               Text(
-                'Enter your email to receive the reset code',
+                'Enter your email to receive the reset link',
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       fontWeight: FontWeight.normal,
                     ),
@@ -92,7 +92,7 @@ class PasswordResetScreen extends ConsumerWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Reset code sent to $email',
+                              'Reset link sent to $email',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -105,7 +105,7 @@ class PasswordResetScreen extends ConsumerWidget {
                             ),
                           ),
                         );
-                        goRouteNotifier.goTo(AppRoute.passwordcode);
+                        //goRouteNotifier.goTo(AppRoute.logIn);
                       } else {
                         // Email does not exist, show error
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -142,7 +142,7 @@ class PasswordResetScreen extends ConsumerWidget {
                     }
                   }
                 },
-                child: const Text('Send Code'),
+                child: const Text('Send link'),
               ),
               const SizedBox(
                 height: 20,

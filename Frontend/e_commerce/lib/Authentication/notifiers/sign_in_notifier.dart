@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:e_commerce/model/signin_user_model.dart';
+import 'package:e_commerce/Authentication/model/signin_user_model.dart';
 import 'package:e_commerce/providers/userRepository_provider.dart';
-import 'package:e_commerce/repositories/user_Repository.dart';
+import 'package:e_commerce/Authentication/repositories/user_Repository.dart';
 
 class SignInNotifier extends Notifier<SignInState> {
   late final UserRepository _userRepository;
@@ -60,7 +60,6 @@ class SignInNotifier extends Notifier<SignInState> {
         // take the userid from the response body
         state = SignInState.success(
           name: response.name,
-          userId: response.userId,
         );
       } else {
         state = state.copyWith(
@@ -119,10 +118,10 @@ class SignInNotifier extends Notifier<SignInState> {
     }
   }
 
-  Future<bool> changePassword(String newPassword) async {
+  Future<bool> changePassword(String newPassword, String token) async {
     try {
       final response =
-          await _userRepository.resetPassword(state.email, newPassword);
+          await _userRepository.resetPassword(state.email, newPassword, token);
       if (response.success) {
         state = state.copyWith(
           isLoading: false,
@@ -142,6 +141,53 @@ class SignInNotifier extends Notifier<SignInState> {
         errorMessage: 'An error occurred while resetting the password.',
       );
       return false;
+    }
+  }
+
+  verifyOTPCode(String email, String verificationCode) async {
+    print("e" + email);
+    try {
+      final response =
+          await _userRepository.verifyOTPCode(email, verificationCode);
+      if (response.success) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: null,
+          verificationCode: verificationCode,
+        );
+        return true;
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: response.message,
+        );
+        return false;
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'An error occurred while verifying the reset code.',
+      );
+      return false;
+    }
+  }
+
+  resendOTPCode(String email, String verificationCode) async {
+    try {
+      final response = await _userRepository.resendOTPCode(email);
+      if (response.success) {
+        state.copyWith(
+          errorMessage: response.message,
+        );
+        return true;
+      } else {
+        state = state.copyWith(
+          errorMessage: 'Email doesn\'t exist',
+        );
+        return false;
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

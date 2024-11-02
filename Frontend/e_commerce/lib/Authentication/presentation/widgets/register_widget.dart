@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:e_commerce/notifiers/registration_notifer.dart';
+import 'package:e_commerce/Authentication/notifiers/registration_notifer.dart';
 import 'package:e_commerce/providers/route_provider.dart';
+import 'package:e_commerce/Authentication/notifiers/sign_in_notifier.dart';
 
 final _formKey = GlobalKey<FormState>();
 
@@ -16,6 +17,9 @@ class RegisterWidget extends ConsumerWidget {
     // consume the class instance responsible for the interaction with the repository (contains also data validation)
     final registrationNotifier =
         ref.read(registrationNotifierProvider.notifier);
+
+    final signInNotifier = ref.read(signInNotifierProvider.notifier);
+    final signInState = ref.watch(signInNotifierProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -72,7 +76,10 @@ class RegisterWidget extends ConsumerWidget {
 
                   return null;
                 },
-                onChanged: (value) => registrationNotifier.updateEmail(value),
+                onChanged: (value) {
+                  registrationNotifier.updateEmail(value);
+                  signInNotifier.updateEmail(value);
+                },
                 decoration: InputDecoration(
                   hintText: 'Enter your Email',
                   labelText: 'Email',
@@ -141,7 +148,7 @@ class RegisterWidget extends ConsumerWidget {
                       if (ref.read(registrationNotifierProvider).isRegistered) {
                         ref
                             .read(routeNotifierProvider.notifier)
-                            .goTo(AppRoute.verification);
+                            .goTo(AppRoute.VerifyCode);
                       } else if (registrationState.message != null) {
                         // check if snackbar is already visible
 

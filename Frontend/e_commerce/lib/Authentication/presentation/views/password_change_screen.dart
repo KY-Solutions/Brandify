@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_commerce/providers/route_provider.dart';
-import 'package:e_commerce/notifiers/sign_in_notifier.dart';
-//import 'package:e_commerce/routing/app_router.dart';
+import 'package:e_commerce/Authentication/notifiers/sign_in_notifier.dart';
 
 class PasswordChangeScreen extends ConsumerWidget {
-  const PasswordChangeScreen({super.key});
+  final String token;
+
+  const PasswordChangeScreen({Key? key, required this.token}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final signInNotifier = ref.read(signInNotifierProvider.notifier);
-    //final signInState = ref.watch(signInNotifierProvider);
+    final signInState = ref.watch(signInNotifierProvider);
     final goRouteProviderNotifer = ref.read(routeNotifierProvider.notifier);
     final formKey = GlobalKey<FormState>();
     final newPasswordController = TextEditingController();
@@ -110,7 +111,7 @@ class PasswordChangeScreen extends ConsumerWidget {
                   try {
                     // Call a method from the notifier to change the password
                     final result =
-                        await signInNotifier.changePassword(newPassword);
+                        await signInNotifier.changePassword(newPassword, token);
                     if (result) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -126,6 +127,8 @@ class PasswordChangeScreen extends ConsumerWidget {
                           ),
                         ),
                       );
+                      // After password change success
+                      goRouteProviderNotifer.markPasswordChanged();
                       goRouteProviderNotifer.goTo(AppRoute.logIn);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

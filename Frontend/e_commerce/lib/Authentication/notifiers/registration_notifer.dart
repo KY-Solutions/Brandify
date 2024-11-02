@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:e_commerce/repositories/user_Repository.dart';
-import 'package:e_commerce/model/register_model.dart';
+import 'package:e_commerce/Authentication/repositories/user_Repository.dart';
+import 'package:e_commerce/Authentication/model/register_model.dart';
 import 'package:e_commerce/providers/userRepository_provider.dart';
 
 class RegistrationNotifier extends Notifier<RegistrationState> {
