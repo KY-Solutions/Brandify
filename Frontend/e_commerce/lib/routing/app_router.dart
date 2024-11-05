@@ -2,8 +2,8 @@ import 'package:e_commerce/Authentication/presentation/views/Verify_screen.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:e_commerce/providers/route_provider.dart';
-import 'package:e_commerce/presentation/views/logIn_screen.dart';
+import 'package:e_commerce/Authentication/providers/route_provider.dart';
+import 'package:e_commerce/Authentication/presentation/views/logIn_screen.dart';
 import 'package:e_commerce/Authentication/presentation/views/register_screen.dart';
 
 import 'package:e_commerce/Authentication/presentation/views/password_change_screen.dart';

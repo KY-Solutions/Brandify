@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:e_commerce/providers/route_provider.dart';
+import 'package:e_commerce/Authentication/providers/route_provider.dart';
 import 'package:e_commerce/Authentication/notifiers/sign_in_notifier.dart';
 
 class PasswordResetScreen extends ConsumerWidget {
