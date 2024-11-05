@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:e_commerce/Authentication/model/signin_user_model.dart';
-import 'package:e_commerce/providers/userRepository_provider.dart';
+import 'package:e_commerce/Authentication/providers/userRepository_provider.dart';
 import 'package:e_commerce/Authentication/repositories/user_Repository.dart';
 
 class SignInNotifier extends Notifier<SignInState> {
