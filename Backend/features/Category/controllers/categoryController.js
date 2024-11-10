@@ -1,8 +1,11 @@
 // controllers/categoryController.js
-const Category = require('../models/Category');
+// const Category = require('../routes/categoryRoutes');  // Adjust path as needed
+const Category = require('../models/Category');  // Adjust the path if needed
+
+class CategoryController {
 
 // Get all categories
-const getAllCategories = async (req, res) => {
+static async  getAllCategories(req, res){
   try {
     const categories = await Category.find();
     res.json(categories);
@@ -12,8 +15,9 @@ const getAllCategories = async (req, res) => {
 };
 
 // Get a specific category by ID
-const getCategoryById = async (req, res) => {
+static async  getCategoryById(req, res){
   try {
+    console.log('Request received on /Category/createCategory');
     const category = await Category.findById(req.params.id);
     if (category) res.json(category);
     else res.status(404).json({ error: 'Category not found' });
@@ -23,7 +27,7 @@ const getCategoryById = async (req, res) => {
 };
 
 // Create a new category
-const createCategory = async (req, res) => {
+static async  createCategory(req, res){
   const { name, description } = req.body;
   try {
     const category = new Category({ name, description });
@@ -35,7 +39,7 @@ const createCategory = async (req, res) => {
 };
 
 // Update a category
-const updateCategory = async (req, res) => {
+static async updateCategory(req, res){
   const { name, description } = req.body;
   try {
     const category = await Category.findByIdAndUpdate(
@@ -51,7 +55,7 @@ const updateCategory = async (req, res) => {
 };
 
 // Delete a category
-const deleteCategory = async (req, res) => {
+static async  deleteCategory(req, res){
   try {
     const category = await Category.findByIdAndDelete(req.params.id);
     if (category) res.status(204).end();
@@ -60,11 +64,5 @@ const deleteCategory = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-module.exports = {
-  getAllCategories,
-  getCategoryById,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-};
+}
+module.exports = CategoryController;
