@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const UserRoutes = require('./features/users/routes/userRoutes');
+const CategoryRoutes = require('./features/Category/routes/categoryRoutes');
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
 
@@ -17,6 +18,7 @@ app.use(body_parser.json());
 
 //* routes
 app.use('/users', UserRoutes);
+app.use('/Category', CategoryRoutes);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
