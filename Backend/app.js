@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const UserRoutes = require('./features/users/routes/userRoutes');
 const ProductRoutes = require('./features/products/routes/productRoutes');
+const CategoryRoutes = require('./features/Category/routes/categoryRoutes');
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
 const fs = require('fs');
@@ -33,6 +34,7 @@ if (!fs.existsSync(uploadDir)) {
 //* routes
 app.use('/users', UserRoutes);
 app.use('/products', ProductRoutes);
+app.use('/Category', CategoryRoutes);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
