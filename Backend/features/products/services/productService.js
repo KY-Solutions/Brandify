@@ -1,6 +1,6 @@
 //* import packages
 const Product = require('../models/product');
-
+const mongoose = require('mongoose');
 
 //* Product Service class
 
@@ -11,7 +11,8 @@ class ProductService {
         return await product.save();
     }
 
-    static async getAllProducts(filters = {},page = 1, limit = 10) {
+    static async getAllProducts(filters = {}, page = 1, limit = 10) {
+        mongoose.set('strictPopulate', false);
         return await Product.find(filters)
             .populate('Category')
             .populate('Review')

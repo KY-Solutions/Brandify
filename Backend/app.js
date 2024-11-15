@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const UserRoutes = require('./features/users/routes/userRoutes');
+const ProductRoutes = require('./features/products/routes/productRoutes');
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
 const fs = require('fs');
@@ -18,6 +19,9 @@ app.use(cors());
 app.use(express.json());
 app.use(body_parser.json());
 
+//? Serve images from the 'uploads' folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const uploadDir = path.join(__dirname, 'uploads');
 
 //? checks if the uploads folder exists if not it creates it automatically
@@ -28,6 +32,7 @@ if (!fs.existsSync(uploadDir)) {
 
 //* routes
 app.use('/users', UserRoutes);
+app.use('/products', ProductRoutes);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {

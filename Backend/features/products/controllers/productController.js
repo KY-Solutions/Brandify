@@ -1,7 +1,7 @@
 //* import packages
 const Product = require('../models/product');
 const ProductService = require('../services/productService');
-
+const { buildFilterObject } = require('../../../utils/filtersUtil');
 
 class ProductController {
     static async createProduct(req, res) {
@@ -9,10 +9,10 @@ class ProductController {
             const productData = req.body;
             //* validation
             if (!productData.name) {
-                res.status(400).json({ message: 'Product name is required.' });
+                return res.status(400).json({ message: 'Product name is required.' });
             }
             if (!productData.description) {
-                res.status(400).json({ message: 'Product description is required.' });
+                return res.status(400).json({ message: 'Product description is required.' });
             }
             //! temporary comment until category feature is implemented
             // if (!productData.category) {
@@ -20,10 +20,10 @@ class ProductController {
             // }
             
             if (!productData.price || productData.price < 0) {
-                res.status(400).json({ message: 'Valid price is required.' });
+                return res.status(400).json({ message: 'Valid price is required.' });
             }
             if (!productData.stock || productData.stock < 0) {
-                res.status(400).json({ message: 'Valid stock is required.' });
+                return res.status(400).json({ message: 'Valid stock is required.' });
             }
 
             //* image handling
@@ -54,13 +54,13 @@ class ProductController {
             //* price validation if provided
             if (productData.price !== undefined) {
                 if (productData.price < 0) {
-                    res.status(400).json({ message: 'Valid price is required.' });
+                    return res.status(400).json({ message: 'Valid price is required.' });
                 }
             }
             //* stock validation if provided
             if (productData.stock !== undefined) {
                 if ( productData.stock < 0) {
-                    res.status(400).json({ message: 'Valid stock is required.' });
+                   return res.status(400).json({ message: 'Valid stock is required.' });
                 }
             }
 
@@ -71,7 +71,7 @@ class ProductController {
 
             const updatedProduct = await ProductService.updateProduct(productId, productData);
             if (!updatedProduct) {
-                res.status(400).json({ message: 'Product not found.' });
+               return res.status(400).json({ message: 'Product not found.' });
             }
 
             res.status(200).json({success: true, message: 'Product updated successfully', product: updatedProduct});
@@ -88,9 +88,12 @@ class ProductController {
         try {
             const pageNumber = parseInt(page, 10);
             const limitNumber = parseInt(limit, 10);
-            const products = await ProductService.getAllProducts(filters, pageNumber, limitNumber);
-            const totalProducts = await Product.countDocuments(filters);
-            res.status(200).json({ success: true, data: products, totalPages: Math.ceil(totalProducts / limitNumber), currentPage: pageNumber });
+
+            const filterObject = buildFilterObject(filters);
+
+            const products = await ProductService.getAllProducts(filterObject, pageNumber, limitNumber);
+            const totalProducts = await Product.countDocuments(filterObject);
+            res.status(200).json({ success: true, products: products, totalPages: Math.ceil(totalProducts / limitNumber), currentPage: pageNumber });
 
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
@@ -104,7 +107,7 @@ class ProductController {
 
             const product = await ProductService.getProductbyId(productId);
             if (!product) {
-                res.status(404).json({ success: false, message: 'Product not found.' });
+                return res.status(404).json({ success: false, message: 'Product not found.' });
             }
             res.status(200).json({ success: true, data: product });
         } catch (error) {
@@ -118,7 +121,7 @@ class ProductController {
         try {
             const product = await ProductService.deleteProduct(productId);
             if (!product) {
-                res.status(404).json({ success: false, message: 'Product not found.' });
+               return res.status(404).json({ success: false, message: 'Product not found.' });
                 }
             res.status(200).json({ success: true, message: 'Product deleted successfuly.' });
         } catch (error) {
