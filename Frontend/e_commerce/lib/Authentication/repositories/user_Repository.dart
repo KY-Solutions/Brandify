@@ -5,7 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:e_commerce/Authentication/model/register_model.dart';
 import 'package:e_commerce/Authentication/model/signin_user_model.dart';
 
-const url = 'http://localhost:5000/';
+import 'package:e_commerce/config.dart';
+
+const url = 'http://localhost:$webPort/';
+
 const registrationUrl = '${url}users/register';
 const logInUrl = '${url}users/login';
 const verificationUrl = '${url}users/check-verification';
