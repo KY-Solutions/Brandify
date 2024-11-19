@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:e_commerce/config.dart';
 
 const url = 'http://localhost:$webPort/';
-final String apiUrl = '${url}Category/createCategory';
+final String apiUrl = '${url}';
 
 class AddCategoryPage extends StatefulWidget {
   const AddCategoryPage({super.key});

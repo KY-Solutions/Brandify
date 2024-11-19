@@ -1,6 +1,8 @@
 // controllers/categoryController.js
 // const Category = require('../routes/categoryRoutes');  // Adjust path as needed
 const Category = require('../models/Category');  // Adjust the path if needed
+const Product = require('../../products/models/product'); // Ensure this is imported
+
 
 class CategoryController {
 
@@ -64,5 +66,28 @@ static async  deleteCategory(req, res){
     res.status(500).json({ error: err.message });
   }
 };
+
+//Get products by category name
+static async getProductsByCategoryName(req, res) {
+  const { name } = req.params; // Extract category name from request parameters
+  try {
+    // Query products and populate the `category` field
+    const products = await Product.find().populate({
+      path: 'category',
+      match: { name }, // Filter the populated category by its name
+    });
+
+    // Filter out products without a matched category
+    const filteredProducts = products.filter((product) => product.category);
+
+    if (filteredProducts.length === 0) {
+      return res.status(404).json({ error: 'No products found for this category' });
+    }
+    res.json(filteredProducts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 }
 module.exports = CategoryController;

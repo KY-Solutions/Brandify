@@ -5,7 +5,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:5000",  // Start on port 5000
+            "url": "http://localhost:54384",  // Start on port 5000
             "webRoot": "${workspaceFolder}",
             "sourceMaps": true
         }
