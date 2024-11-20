@@ -6,7 +6,7 @@ import 'package:e_commerce/config.dart';
 const url = 'http://localhost:$webPort/';
 
 class CategoryService {
-  final String apiUrl = '${url}Category/getCategoryById';
+  final String apiUrl = '${url}';
 
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(Uri.parse(apiUrl));
