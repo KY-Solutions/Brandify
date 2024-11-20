@@ -12,4 +12,5 @@ router.post('/', asyncHandler(categoryController.createCategory));            //
 router.put('/:id', asyncHandler(categoryController.updateCategory));          // Update a category
 router.delete('/:id', asyncHandler(categoryController.deleteCategory));       // Delete a category
 router.get('/:name/products', asyncHandler(categoryController.getProductsByCategoryName));
+
 module.exports = router;

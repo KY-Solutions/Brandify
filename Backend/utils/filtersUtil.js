@@ -18,7 +18,14 @@ const buildFilterObject = (filters) => {
 
     //* sizes and colors filters
     if (filters.sizes) filterObject.sizes = { $in: filters.sizes.split(',') };
-    if (filters.colors) filterObject.colors = { $in: filters.colors.split(',') }; // Match any of the colors
+    if (filters.colors) filterObject.colors = { $in: filters.colors.split(',') }; //? Match any of the colors
+
+    //* subcategories and categories
+    if (filters.subCategory) {
+        filterObject.subCategory = filters.subCategory;
+    } else if (filters.category) {
+        filterObject.category = filters.category;
+    }
 
     return filterObject;
 }

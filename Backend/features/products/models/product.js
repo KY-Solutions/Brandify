@@ -16,8 +16,13 @@ const productSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
-        required: false, //* temporary until the category schema is implemented
+        required: true, 
     },
+    subCategory: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subcategory',
+        required: false,
+    },  
     price: {
         type: Number,
         required: true,

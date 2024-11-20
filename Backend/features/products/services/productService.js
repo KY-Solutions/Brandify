@@ -14,7 +14,7 @@ class ProductService {
     static async getAllProducts(filters = {}, page = 1, limit = 10) {
         mongoose.set('strictPopulate', false);
         return await Product.find(filters)
-            .populate('Category')
+            .populate('Category').populate('Subcategory')
             .populate('Review')
             .skip((page - 1) * limit)
             .limit(limit);
