@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
         trim: true,
     },
     category: {
-        type: mongoose.Schema.Types.String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: false, //* temporary until the category schema is implemented
     },
