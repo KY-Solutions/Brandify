@@ -1,5 +1,3 @@
-// controllers/categoryController.js
-// const Category = require('../routes/categoryRoutes');  // Adjust path as needed
 const Category = require('../models/Category');  // Adjust the path if needed
 const Product = require('../../products/models/product'); // Ensure this is imported
 
