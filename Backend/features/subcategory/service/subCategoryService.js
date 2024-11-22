@@ -1,4 +1,3 @@
-const subCategory = require('../models/subCategory');
 const SubCategory = require('../models/subCategory');
 const mongoose = require('mongoose');
 
@@ -10,15 +9,16 @@ class SubCategoryService {
     }
 
     static async getAllSubCategories(page = 1, limit = 10) {
+        //mongoose.set('strictPopulate', false);
         const subCategories = await SubCategory.find()
-            .populate('Category')
+            .populate('category')
             .skip((page - 1) * limit)
             .limit(limit);
         return subCategories;
     }
 
     static async getSubCategoryById(subCategoryId) {
-        return await SubCategory.findById(subCategoryId).populate('Category');
+        return await SubCategory.findById(subCategoryId).populate('category');
     }
 
     static async UpdateSubCategory(subCategoryId, subCategoryData) {

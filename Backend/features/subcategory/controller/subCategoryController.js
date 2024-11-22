@@ -33,7 +33,7 @@ class SubCategoryController {
                 return res.status(400).json({ message: 'Subcategory Id is required' });
             }
 
-            const updatedSubCategory = await SubCategoryService.updateSubCategory(subCategoryId, subCategoryData);
+            const updatedSubCategory = await SubCategoryService.UpdateSubCategory(subCategoryId, subCategoryData);
             if (!updatedSubCategory) {
                 return res.status(404).json({ message: 'Subcategory not found' });
             }
@@ -63,7 +63,7 @@ class SubCategoryController {
         const subCategoryId = req.params.id;
 
         try {
-            const subCategory = await SubCategory.getSubCategoryById(subCategoryId);
+            const subCategory = await SubCategoryService.getSubCategoryById(subCategoryId);
             if (!subCategory) {
                 res.status(404).json({ success: false, message: 'Subcategory not found.' });
             }

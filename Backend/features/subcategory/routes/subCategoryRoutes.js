@@ -15,3 +15,5 @@ router.get('/:id', asyncHandler(SubCategoryController.getSubCategoryById));
 router.post('/', authMiddleware, roleMiddleware('admin'), asyncHandler(SubCategoryController.createSubCategory));
 router.put('/:id', authMiddleware, roleMiddleware('admin'), asyncHandler(SubCategoryController.updateSubCategory));
 router.delete('/:id', authMiddleware, roleMiddleware('admin'), asyncHandler(SubCategoryController.deleteSubCategory));
+
+module.exports = router;
