@@ -9,6 +9,6 @@ Frontend/Brandify/.dart_tool/
 Frontend/Brandify/.flutter-plugins
 Frontend/Brandify/pubspec.lock
 Frontend/Brandify/.gitignore
-Frontend/Brandify/linux
-Frontend/Brandify/macos
-Frontend/Brandify/windows
+Frontend/Brandify/linux/
+Frontend/Brandify/macos/
+Frontend/Brandify/windows/
