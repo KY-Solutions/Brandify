@@ -4,8 +4,11 @@ Backend/node_modules
 Backend/.env
 
 # Ignore Flutter files
-Frontend/e_commerce/build/
-Frontend/e_commerce/.dart_tool/
-Frontend/e_commerce/.flutter-plugins
-Frontend/e_commerce/pubspec.lock
-Frontend/e_commerce/.gitignore
+Frontend/Brandify/build/
+Frontend/Brandify/.dart_tool/
+Frontend/Brandify/.flutter-plugins
+Frontend/Brandify/pubspec.lock
+Frontend/Brandify/.gitignore
+Frontend/Brandify/linux
+Frontend/Brandify/macos
+Frontend/Brandify/windows
