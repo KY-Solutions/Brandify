@@ -1,10 +1,11 @@
 const Review = require('../models/review');
 const Product = require('../../products/models/product');
+const ProductService = require('../../products/services/productService');
 
 class ReviewService{
     static async createReview(reviewData) {
         const review = new Review(reviewData);
-        return await review.save();
+        return (await (await review.save()).populate('product','name')).populate('user','name');
     }
 
     static async findProductById(productId) {

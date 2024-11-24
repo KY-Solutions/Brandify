@@ -3,7 +3,7 @@ const ReviewService = require('../services/reviewService');
 class ReviewController {
     static async addReview(req, res) {
         try {
-            const { productId, rating, comment } = req.body;
+            const { rating, comment, productId } = req.body;
             const userId = req.userId; //? gets the userId from the jwt (authmiddleware).
 
             const product = await ReviewService.findProductById(productId);
@@ -29,7 +29,7 @@ class ReviewController {
 
     static async getProductReviews(req, res) {
         try {
-            const { productId } = req.params;
+            const  productId  = req.query.id;
             const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
 
             const product = await ReviewService.findProductById(productId);
@@ -46,7 +46,7 @@ class ReviewController {
 
     static async deleteReview(req, res) {
         try {
-            const { productId } = req.params;
+            const  productId  = req.params.id;
             const userId = req.userId;
             const review = await ReviewService.findUserReviewForProduct(userId, productId);
 
@@ -58,6 +58,7 @@ class ReviewController {
                 return res.status(403).json({ success: false, message: 'You do not have permission to delete this review' });
             }
 
+            await ReviewService.deleteReview(review._id);
             await ReviewService.updateProductRating(review.product);
             res.status(200).json({ success: true, message: 'Review deleted successfully' });
         } catch (error) {
@@ -65,9 +66,9 @@ class ReviewController {
         }
     }
 
-    async getTopFiveReviews(req, res) {
+    static async getTopFiveReviews(req, res) {
         try {
-            const { productId } = req.params;
+            const productId  = req.query.id;
 
             const product = await ReviewService.findProductById(productId);
             if (!product) {
