@@ -50,12 +50,17 @@ const productSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
-   reviews: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Review',
-    default: []
-},
-
+    avgRating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5,
+    },
+    numOfReviews: {
+        type: Number,
+        default: 0,
+        min: 0,
+    }
 }, { timestamps: true, });
 
 const Product = mongoose.model('Product', productSchema);
