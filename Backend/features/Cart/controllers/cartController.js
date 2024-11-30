@@ -5,9 +5,9 @@ class CartController {
     // Add an item to the cart
     static async addToCart(req, res) {
         try {
-            const { userId, productId, quantity } = req.body;
-            //const userId = req.params.id;  // Use optional chaining to avoid the error if user is undefined
-    
+            const { productId, quantity } = req.body;
+            const userId = req.userId.toString();
+            console.log("userId: " + userId);
             // Validation: Ensure productId and quantity are valid
             if (!productId) {
                 return res.status(400).json({ message: 'Product ID is required.' });
@@ -32,7 +32,7 @@ class CartController {
     // Get the user's cart
     static async getCart(req, res) {
         try {
-            const { userId } = req.body; // Extract userId from the request body
+            const userId = req.userId;
 
             if (!userId) {
                 return res.status(400).json({ message: 'User ID is required.' });
@@ -55,7 +55,8 @@ class CartController {
 // Controller for updating cart item
 static async updateCartItem(req, res) {
     try {
-        const { userId, productId, quantity } = req.body;
+        const { productId, quantity } = req.body;
+        const userId = req.userId;
 
         // Validation: Ensure productId and quantity are valid
         if (!productId) {
@@ -81,9 +82,10 @@ static async updateCartItem(req, res) {
 
     // Remove an item from the cart
     static async removeCartItem(req, res) {
-        const { userId, productId } = req.body;
-
-    
+        
+        const productId = req.params.productId;
+        const userId = req.userId;
+ 
         if (!userId) {
             return res.status(400).json({ message: 'User ID is missing or not authenticated.' });
         }
@@ -100,6 +102,25 @@ static async updateCartItem(req, res) {
             }
     
             res.status(200).json({ success: true, message: 'Item removed from cart successfully', data: cart });
+    
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error: error.message });
+        }
+    }
+    static async removeCart(req, res) { 
+        const userId = req.userId;
+ 
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is missing or not authenticated.' });
+        }
+    
+        try {
+            const cart = await CartService.removeCart(userId);
+            if (!cart) {
+                return res.status(400).json({ message: 'Failed to remove cart.' });
+            }
+    
+            res.status(200).json({ success: true, message: 'cart removed successfully'});
     
         } catch (error) {
             res.status(500).json({ message: 'Server error', error: error.message });

@@ -11,5 +11,6 @@ router.post('/', authMiddleware, roleMiddleware(['user', 'admin']), asyncHandler
 router.get('/', authMiddleware, roleMiddleware(['user', 'admin']), asyncHandler(CartController.getCart)); // Get user's cart
 router.put('/', authMiddleware, roleMiddleware(['user', 'admin']), asyncHandler(CartController.updateCartItem)); // Update item quantity
 router.delete('/:productId', authMiddleware, roleMiddleware(['user', 'admin']), asyncHandler(CartController.removeCartItem)); // Remove item from cart
+router.delete('/', authMiddleware, roleMiddleware(['user', 'admin']), asyncHandler(CartController.removeCart)); // Remove the whole from cart
 
 module.exports = router;
