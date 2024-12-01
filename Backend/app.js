@@ -8,7 +8,7 @@ const CategoryRoutes = require('./features/Category/routes/categoryRoutes');
 const ReviewRoutes = require('./features/reviews/routes/reviewRoutes');
 const CartRoutes = require('./features/Cart/routes/cartRoutes');
 const SubCategoryRoutes = require('./features/subcategory/routes/subCategoryRoutes');
-const notifications = require('./features/Notifications/routes/notificationRoutes');
+
 
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
@@ -43,7 +43,6 @@ app.use('/Category', CategoryRoutes);
 app.use('/reviews', ReviewRoutes);
 app.use('/Cart', CartRoutes);
 app.use('/subcategory', SubCategoryRoutes);
-app.use('/notifications', notifications);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
