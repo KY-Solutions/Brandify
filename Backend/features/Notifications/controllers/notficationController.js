@@ -14,7 +14,7 @@ static async createNotification(req, res){
 };
 
 static async fetchNotifications(req, res){
-    const userId = req.params.userId; // Assuming the userId is passed as a parameter
+    const userId = req.userId.toString();
     try {
         const notifications = await notificationService.fetchNotifications(userId);
         res.status(200).json({ success: true, data: notifications });
@@ -24,7 +24,7 @@ static async fetchNotifications(req, res){
 };
 
 static async markAsRead(req, res){
-  const { id } = req.params;
+  const id = req.query.notificationid;
   try {
     const notification = await notificationService.markNotificationAsRead(id);
     res.status(200).json({ success: true, data: notification });
@@ -35,7 +35,7 @@ static async markAsRead(req, res){
 
 static async deleteNotification(req, res){
     try {
-        const { id } = req.params;
+        const id = req.query.notificationid;
 
         // Use service layer to delete notification
         const notification = await notificationService.deleteNotificationById(id);
