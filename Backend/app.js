@@ -6,9 +6,10 @@ const UserRoutes = require('./features/users/routes/userRoutes');
 const ProductRoutes = require('./features/products/routes/productRoutes');
 const CategoryRoutes = require('./features/category/routes/categoryRoutes');
 const ReviewRoutes = require('./features/reviews/routes/reviewRoutes');
-const CartRoutes = require('./features/cart/routes/cartRoutes');
+const CartRoutes = require('./features/Cart/routes/cartRoutes');
 const SubCategoryRoutes = require('./features/subcategory/routes/subCategoryRoutes');
-
+const OrderRoutes = require('./features/order/routes/orderRoutes');
+const DiscountRoutes = require('./features/discount/routes/discountRoutes');
 
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
@@ -43,7 +44,8 @@ app.use('/Category', CategoryRoutes);
 app.use('/reviews', ReviewRoutes);
 app.use('/Cart', CartRoutes);
 app.use('/subcategory', SubCategoryRoutes);
-
+app.use('/order', OrderRoutes);
+app.use('/discounts',DiscountRoutes);
 //* Error handling middleware
 app.use((err, req, res, next) => {
     res.status(500).json({ success: false, message: err.message });

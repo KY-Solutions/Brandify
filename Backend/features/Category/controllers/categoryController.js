@@ -71,7 +71,7 @@ static async getProductsByCategoryName(req, res) {
   try {
     // Query products and populate the `category` field
     const products = await Product.find().populate({
-      path: 'category',
+      path: 'Category',
       match: { name }, // Filter the populated category by its name
     });
 
