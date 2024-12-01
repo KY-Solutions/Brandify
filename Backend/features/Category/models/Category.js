@@ -13,5 +13,6 @@ const categorySchema = new mongoose.Schema({
     },
   });
   
-  module.exports = mongoose.model('Category', categorySchema);
-  
+// Use this pattern to check if the model already exists in Mongoose's cache (avoid redefining it multiple times)
+const Category = mongoose.models.categorySchema || mongoose.model('Category', categorySchema);
+module.exports = Category;
