@@ -82,6 +82,21 @@ static async removeCartItem(userId, productId) {
 
     throw new Error('Item not found in cart');
 }
+static async removeCart(userId) {
+    try {
+        // Find and delete the cart for the user
+        const deletedCart = await Cart.findOneAndDelete({ user: userId });
+
+        if (!deletedCart) {
+            throw new Error('Cart not found'); // Handle case where cart doesn't exist
+        }
+
+        return { message: 'Cart successfully removed', deletedCart };
+    } catch (error) {
+        throw new Error('Error removing cart: ' + error.message);
+    }
+}
+
 }
 
 module.exports = CartService;
