@@ -23,6 +23,5 @@ const CartSchema = new Schema({
     ]
 }, { timestamps: true });
 
-// Use this pattern to check if the model already exists in Mongoose's cache (avoid redefining it multiple times)
-const Category = mongoose.models.Category || mongoose.model('Category', CategorySchema);
-module.exports = Category;
+const Cart = mongoose.models.CartSchema || mongoose.model('Cart', CartSchema);
+module.exports = Cart;

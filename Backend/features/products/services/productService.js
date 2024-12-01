@@ -34,6 +34,15 @@ class ProductService {
         return await Product.findByIdAndDelete(productId);
     }
 
+    static async updateProductStock(productId, quantity) {
+        const product = await ProductService.getProductbyId(productId);
+        if (product) {
+            product.stock -= quantity;            
+            await product.save();
+            console.log(`new stock = ${product.stock}`);
+        }
+    }
+
 }
 
 module.exports = ProductService;
