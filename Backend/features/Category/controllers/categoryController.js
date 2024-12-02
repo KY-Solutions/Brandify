@@ -1,7 +1,6 @@
 const Category = require('../models/Category');  // Adjust the path if needed
 const Product = require('../../products/models/product'); // Ensure this is imported
 
-
 class CategoryController {
 
 // Get all categories
