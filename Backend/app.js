@@ -10,6 +10,7 @@ const CartRoutes = require('./features/Cart/routes/cartRoutes');
 const SubCategoryRoutes = require('./features/subcategory/routes/subCategoryRoutes');
 const OrderRoutes = require('./features/order/routes/orderRoutes');
 const DiscountRoutes = require('./features/discount/routes/discountRoutes');
+const Notifications = require('./features/notifications/routes/notificationsRoutes');
 
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
@@ -46,6 +47,8 @@ app.use('/Cart', CartRoutes);
 app.use('/subcategory', SubCategoryRoutes);
 app.use('/order', OrderRoutes);
 app.use('/discounts',DiscountRoutes);
+app.use('/notifications',Notifications);
+
 //* Error handling middleware
 app.use((err, req, res, next) => {
     res.status(500).json({ success: false, message: err.message });
