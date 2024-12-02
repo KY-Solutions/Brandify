@@ -54,6 +54,18 @@ class CategoryController {
     }
   }
 
+};
+
+//Get products by category name
+static async getProductsByCategoryName(req, res) {
+  const { name } = req.params; // Extract category name from request parameters
+  try {
+    // Query products and populate the `category` field
+    const products = await Product.find().populate({
+      path: 'Category',
+      match: { name }, // Filter the populated category by its name
+    });
+
   // Get products by category name
   static async getProductsByCategoryName(req, res) {
     try {
