@@ -11,7 +11,7 @@ const SubCategoryRoutes = require('./features/subcategory/routes/subCategoryRout
 const brand = require('./features/Brand/routes/brandRoutes');
 const OrderRoutes = require('./features/order/routes/orderRoutes');
 const DiscountRoutes = require('./features/discount/routes/discountRoutes');
-const Notifications = require('./features/notifications/routes/notificationsRoutes');
+const Notifications = require('./features/notifications/routes/notificationRoutes');
 
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
