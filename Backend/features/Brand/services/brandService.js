@@ -19,11 +19,6 @@ class brandService {
 
     static async updateBrand(name, updateData, logoPath) {
         const brand = await Brand.findOne({ name });
-
-        if (!brand) {
-            throw new Error('Brand information not found');
-        }
-
         // Update fields, including logo if provided
         Object.assign(brand, updateData);
         if (logoPath) {
@@ -35,20 +30,12 @@ class brandService {
 
     static async getBrand(name) {
         const brand = await Brand.findOne({ name });
-    
-        if (!brand) {
-            throw new Error(`Brand with name '${name}' not found`);
-        }
         return brand;
     }
     
 
     static async deleteField(field) {
         const brand = await Brand.findOne();
-
-        if (!brand) {
-            throw new Error('Brand information not found');
-        }
 
         if (_.has(brand.toObject(), field)) {
             _.unset(brand, field);
