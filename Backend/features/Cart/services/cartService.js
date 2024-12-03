@@ -4,14 +4,8 @@ const Product = require('../../products/models/product'); // Assuming you have a
 class CartService {
 
     // Add an item to the cart
-    static async addToCart(userId, productId, quantity) {
+    static async addToCart(userId, productId, quantity, customizations) {
         try {
-            // Check if the product exists
-            const product = await Product.findById(productId);
-            if (!product) {
-                throw new Error('Product not found');
-            }
-
             // Find or create a cart for the user
             let cart = await Cart.findOne({ user: userId });
 
@@ -22,14 +16,23 @@ class CartService {
                 });
             }
 
-            // Check if the item already exists in the cart
-            const existingItemIndex = cart.items.findIndex(item => item.product.toString() === productId.toString());
+            // Check if the product with the same customizations exists in the cart
+            const existingItemIndex = cart.items.findIndex(
+                item =>
+                    item.product.toString() === productId.toString() &&
+                    JSON.stringify(item.customizations) === JSON.stringify(customizations)
+            );
+
             if (existingItemIndex !== -1) {
-                // Item already exists, update the quantity
+                // Item with the same customizations already exists in the cart, update the quantity
                 cart.items[existingItemIndex].quantity += quantity;
             } else {
                 // Item doesn't exist in the cart, add it
-                cart.items.push({ product: productId, quantity });
+                cart.items.push({
+                    product: productId,
+                    customizations,
+                    quantity
+                });
             }
 
             // Save the cart
@@ -49,23 +52,50 @@ class CartService {
 
 
 // Update an item's quantity in the cart
-static async updateCartItem(userId, productId, quantity) {
-    // Find the cart for the specific user
-    const cart = await Cart.findOne({ user: userId }); // Corrected key
-    if (!cart) {
-        throw new Error('Cart not found'); // Throw error if cart doesn't exist
-    }
+static async updateCartItem(userId, productId, newQuantity, customizations) {
+    try {
+        // Find the cart for the specific user
+        const cart = await Cart.findOne({ user: userId });
+        if (!cart) {
+            throw new Error('Cart not found');
+        }
 
-    // Find the item in the cart
-    const item = cart.items.find(item => item.product.toString() === productId); // Use 'product' from schema
-    if (item) {
-        item.quantity = quantity; // Update the quantity
-        await cart.save(); // Save changes to the database
+        // Find the product to ensure it exists and check stock
+        const product = await Product.findById(productId);
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        // Check if the product with the same customizations exists in the cart
+        const itemIndex = cart.items.findIndex(
+            item =>
+                item.product.toString() === productId.toString() &&
+                JSON.stringify(item.customizations) === JSON.stringify(customizations)
+        );
+
+        if (itemIndex === -1) {
+            throw new Error('Item with the specified customizations not found in cart');
+        }
+        
+        // Validate stock availability
+        if (newQuantity > product.stock) {
+            throw new Error(
+                `Requested quantity (${newQuantity}) exceeds available stock (${product.stock})`
+            );
+        }
+
+        // Update the quantity
+        cart.items[itemIndex].quantity = newQuantity;
+
+        // Save changes to the cart
+        await cart.save();
+
         return cart;
+    } catch (error) {
+        throw new Error('Error updating cart item: ' + error.message);
     }
-
-    throw new Error('Item not found in cart'); // Error if item doesn't exist
 }
+
 
 static async removeCartItem(userId, productId) {
     const cart = await Cart.findOne({ user: userId });  // Use 'user' instead of 'userId' if the field is named 'user'
