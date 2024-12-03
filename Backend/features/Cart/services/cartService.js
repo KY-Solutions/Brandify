@@ -56,15 +56,9 @@ static async updateCartItem(userId, productId, newQuantity, customizations) {
     try {
         // Find the cart for the specific user
         const cart = await Cart.findOne({ user: userId });
-        if (!cart) {
-            throw new Error('Cart not found');
-        }
 
         // Find the product to ensure it exists and check stock
         const product = await Product.findById(productId);
-        if (!product) {
-            throw new Error('Product not found');
-        }
 
         // Check if the product with the same customizations exists in the cart
         const itemIndex = cart.items.findIndex(
@@ -72,17 +66,6 @@ static async updateCartItem(userId, productId, newQuantity, customizations) {
                 item.product.toString() === productId.toString() &&
                 JSON.stringify(item.customizations) === JSON.stringify(customizations)
         );
-
-        if (itemIndex === -1) {
-            throw new Error('Item with the specified customizations not found in cart');
-        }
-        
-        // Validate stock availability
-        if (newQuantity > product.stock) {
-            throw new Error(
-                `Requested quantity (${newQuantity}) exceeds available stock (${product.stock})`
-            );
-        }
 
         // Update the quantity
         cart.items[itemIndex].quantity = newQuantity;
