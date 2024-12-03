@@ -4,11 +4,14 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const UserRoutes = require('./features/users/routes/userRoutes');
 const ProductRoutes = require('./features/products/routes/productRoutes');
-const CategoryRoutes = require('./features/Category/routes/categoryRoutes');
+const CategoryRoutes = require('./features/category/routes/categoryRoutes');
 const ReviewRoutes = require('./features/reviews/routes/reviewRoutes');
 const CartRoutes = require('./features/Cart/routes/cartRoutes');
 const SubCategoryRoutes = require('./features/subcategory/routes/subCategoryRoutes');
 const brand = require('./features/Brand/routes/brandRoutes');
+const OrderRoutes = require('./features/order/routes/orderRoutes');
+const DiscountRoutes = require('./features/discount/routes/discountRoutes');
+const Notifications = require('./features/notifications/routes/notificationsRoutes');
 
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
@@ -44,6 +47,9 @@ app.use('/reviews', ReviewRoutes);
 app.use('/Cart', CartRoutes);
 app.use('/subcategory', SubCategoryRoutes);
 app.use('/brand', brand);
+app.use('/order', OrderRoutes);
+app.use('/discounts',DiscountRoutes);
+app.use('/notifications',Notifications);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
