@@ -11,7 +11,7 @@ class UserController {
     //* [500] internal server error
 
     static async register(req, res) {
-        const { name, email ,password } = req.body;
+        const { name, email, password } = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         // Validate that name and password are provided
@@ -20,7 +20,7 @@ class UserController {
         }
 
         if (!emailRegex.test(email)) {
-        return res.status(400).json({ success: false, message: 'Invalid email format' });
+            return res.status(400).json({ success: false, message: 'Invalid email format' });
         }
 
         try {
@@ -39,7 +39,7 @@ class UserController {
             //* send OTP to verify email
             await sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
             
-            return res.status(201).json({ success: true, message: 'User created successfully.',token ,data: [newUser.name,newUser.email,newUser._id] });
+            return res.status(201).json({ success: true, message: 'User created successfully.', token, data: [newUser.name, newUser.email, newUser._id] });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -60,7 +60,15 @@ class UserController {
                 return res.status(401).json({ success: false, message: 'Invalid email or password.' });
             }
             const token = tokenUtil.generateToken(user._id);
-            res.status(200).json({ success: true, message: 'Login successful.',token, data: user });
+            const refreshToken = tokenUtil.generateRefreshToken(user._id);
+            // store refresh token in Browser cookie
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                sameSite: 'strict',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+
+            })
+            res.status(200).json({ success: true, message: 'Login successful.', token, data: user });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -205,7 +213,7 @@ class UserController {
             if (OTP != user.userVerificationOTP) {
                 res.status(400).json({ success: false, message: 'Incorrect verification code' });
             }
-            if (OTP == user.userVerificationOTP && Date.now() > user.verificationOTPexpiresAt ) {
+            if (OTP == user.userVerificationOTP && Date.now() > user.verificationOTPexpiresAt) {
                 res.status(408).json({ success: false, message: 'verification Expired Please try again' });
             }
 
@@ -225,13 +233,13 @@ class UserController {
     //* [200] ok
     //* [500] internal server error
 
-    static async resendEmailVerificationOTP(req,res) {
+    static async resendEmailVerificationOTP(req, res) {
         const { email } = req.body;
 
         try {
             const user = await UserService.findUserByEmail(email);
             if (user.isUserVerified) {
-               return res.status(400).json({ success: false, message: 'Email already verified, please login' });
+                return res.status(400).json({ success: false, message: 'Email already verified, please login' });
             }
             const emailOTP = await UserService.generateEmailOTP(email);
             sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
@@ -243,6 +251,40 @@ class UserController {
 
         }
     }
+
+    static async refreshAccess(req, res) {
+        const refreshToken = req.cookies.refreshToken;
+        try {
+            if (!refreshToken) {
+                return res.status(404).json({ message: 'Refresh token is missing' });
+            }
+             
+            // verify the refresh token 
+            const decoded = tokenUtil.verifyRefreshToken(refreshToken);
+
+            // generate a new access token
+            const newAccessToken = tokenUtil.generateToken(decoded.id);
+
+            res.status(200).json({ success: true, token: newAccessToken, });
+        } catch (error) {
+            res.status(401).json({ success: false, message: 'Invalid refresh token.' });
+        }
+    }
+
+    static async logout(req, res) {
+        try {
+            res.clearCookie('refreshToken', {
+            httpOnly: true,
+            sameSite: 'strict',
+            });
+            res.status(200).json({ success: true, message: 'Logged out successfully.' });
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Failed to log out.' });
+
+        }
+    }
+
 }
 
 module.exports = UserController;
