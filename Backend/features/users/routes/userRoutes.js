@@ -16,6 +16,12 @@ router.post('/register', asyncHandler(UserController.register));
 //? Login route
 router.post('/login',loginLimiter, asyncHandler(UserController.login));
 
+//? logout route
+router.post('/logout', authMiddleware, asyncHandler(UserController.logout));
+
+//? refresh access
+router.post('/refresh', asyncHandler(UserController.refreshAccess));
+
 //? Request Password reset route
 router.post('/request-password-reset',passwordResetLimiter, asyncHandler(UserController.requestPasswordReset));
 

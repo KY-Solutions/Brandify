@@ -1,6 +1,7 @@
 //* import packages
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const UserRoutes = require('./features/users/routes/userRoutes');
 const ProductRoutes = require('./features/products/routes/productRoutes');
@@ -27,7 +28,11 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(body_parser.json());
+<<<<<<< feature/backend-jwt-refresh-token
+app.use(cookieParser());
+=======
 app.use(globalLimiter);
+>>>>>>> dev
 
 //? Serve images from the 'uploads' folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
