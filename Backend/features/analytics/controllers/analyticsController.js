@@ -1,6 +1,6 @@
-const UserAnalyticsService = require("../services/UseranalyticsService");
-const ProductAnalyticsService = require("../services/ProductanalyticsService");
-const OrderAnalyticsService = require("../services/OrderanalyticsService");
+const UserAnalyticsService = require("../services/userAnalyticsService");
+const ProductAnalyticsService = require("../services/productAnalyticsService");
+const OrderAnalyticsService = require("../services/orderAnalyticsService");
 
 class AnalyticsController {
   static async getUserAnalytics(req, res) {

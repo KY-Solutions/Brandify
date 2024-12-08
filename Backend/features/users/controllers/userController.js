@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
 const User = require('../models/user');
 const { sendEmail } = require('../../../utils/emailService');
+const analytics = require('../../analytics/services/userAnalyticsService');
 class UserController {
     //* [Method] controller method to register user and handle validation
     //* [201] created
@@ -61,6 +62,7 @@ class UserController {
             }
             const token = tokenUtil.generateToken(user._id);
             res.status(200).json({ success: true, message: 'Login successful.',token, data: user });
+            analytics.logUserEvent(user, "USER_ACTION", { "eventType": "login" });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
