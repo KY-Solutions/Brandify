@@ -86,7 +86,7 @@ class UserController {
             if (!user) {
                 return res.status(404).json({ success: false, message: 'User not found.' });
             }
-            res.json({ success: true, message: 'User found.', data: user });
+            res.json({ success: true, message: 'User found.', data: { user: newUser.name, email: newUser.email,id: newUser._id, isverified: newUser.isUserVerified } });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -105,7 +105,7 @@ class UserController {
             if (!updatedUser) {
                 return res.status(404).json({ success: false, message: 'User not found.' });
             }
-            res.json({ success: true, data: updatedUser });
+            res.json({ success: true, data: { user: updatedUser.name, email: updatedUser.email,id: updatedUser._id, isverified: updatedUser.isUserVerified } });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
