@@ -1,6 +1,7 @@
 //* import packages
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const UserRoutes = require('./features/users/routes/userRoutes');
 const ProductRoutes = require('./features/products/routes/productRoutes');
@@ -12,6 +13,7 @@ const brand = require('./features/Brand/routes/brandRoutes');
 const OrderRoutes = require('./features/order/routes/orderRoutes');
 const DiscountRoutes = require('./features/discount/routes/discountRoutes');
 const Notifications = require('./features/notifications/routes/notificationRoutes');
+const { globalLimiter } = require('./middleware/rateLimiter/rateLimiter.js');
 const newsletterRoutes = require('./features/newsletter/routes/newsletterRoutes');
 
 const dotenv = require('dotenv');
@@ -28,6 +30,8 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(body_parser.json());
+app.use(cookieParser());
+app.use(globalLimiter);
 
 //? Serve images from the 'uploads' folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
