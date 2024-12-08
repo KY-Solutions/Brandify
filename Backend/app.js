@@ -12,6 +12,7 @@ const brand = require('./features/Brand/routes/brandRoutes');
 const OrderRoutes = require('./features/order/routes/orderRoutes');
 const DiscountRoutes = require('./features/discount/routes/discountRoutes');
 const Notifications = require('./features/notifications/routes/notificationRoutes');
+const Analytics = require('./features/analytics/routes/analyticsRoutes');
 
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
@@ -50,6 +51,7 @@ app.use('/brand', brand);
 app.use('/order', OrderRoutes);
 app.use('/discounts',DiscountRoutes);
 app.use('/notifications',Notifications);
+app.use('/analytics', Analytics);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
