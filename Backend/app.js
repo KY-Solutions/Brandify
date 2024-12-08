@@ -14,6 +14,8 @@ const OrderRoutes = require('./features/order/routes/orderRoutes');
 const DiscountRoutes = require('./features/discount/routes/discountRoutes');
 const Notifications = require('./features/notifications/routes/notificationRoutes');
 const { globalLimiter } = require('./middleware/rateLimiter/rateLimiter.js');
+const newsletterRoutes = require('./features/newsletter/routes/newsletterRoutes');
+
 const dotenv = require('dotenv');
 const body_parser = require('body-parser');
 const fs = require('fs');
@@ -28,11 +30,8 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(body_parser.json());
-<<<<<<< feature/backend-jwt-refresh-token
 app.use(cookieParser());
-=======
 app.use(globalLimiter);
->>>>>>> dev
 
 //? Serve images from the 'uploads' folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -56,6 +55,7 @@ app.use('/brand', brand);
 app.use('/order', OrderRoutes);
 app.use('/discounts',DiscountRoutes);
 app.use('/notifications',Notifications);
+app.use('/newsletter', newsletterRoutes);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
