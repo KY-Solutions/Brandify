@@ -1,31 +1,63 @@
 const CartService = require('../services/cartService');
+const ProductService = require('../../products/services/productService');
+const Product = require('../../products/models/product');
 
 class CartController {
 
     // Add an item to the cart
     static async addToCart(req, res) {
         try {
-            const { productId, quantity } = req.body;
-            const userId = req.userId.toString();
-            console.log("userId: " + userId);
-            // Validation: Ensure productId and quantity are valid
-            if (!productId) {
-                return res.status(400).json({ message: 'Product ID is required.' });
+            const userId = req.userId;
+            const { productId, quantity, customizations } = req.body;
+
+            // Fetch the product
+            //const product = await ProductService.getProductbyId(productId);
+            const product = await Product.findById(productId);//change later to use productservice after fixing
+
+            if (!product) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Product not found'
+                });
             }
-            if (quantity <= 0) {
-                return res.status(400).json({ message: 'Quantity must be greater than 0.' });
+
+            // Validate customizations
+            if (customizations.size && !product.sizes.includes(customizations.size)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid size: ${customizations.size}. Available sizes are: ${product.sizes.join(', ')}`
+                });
             }
-    
-            // Assuming CartService handles adding to the cart with proper model validation
-            const cart = await CartService.addToCart(userId, productId, quantity);
-            if (!cart) {
-                return res.status(400).json({ message: 'Failed to add item to cart.' });
+
+            if (customizations.color && !product.colors.includes(customizations.color)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid color: ${customizations.color}. Available colors are: ${product.colors.join(', ')}`
+                });
             }
-    
-            res.status(200).json({ success: true, message: 'Item added to cart successfully', data: cart });
-    
+
+            // Check if requested quantity exceeds available stock
+            if (quantity > product.stock) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Requested quantity (${quantity}) exceeds available stock (${product.stock})`
+                });
+            }
+
+            // Call the service layer function
+            const cart = await CartService.addToCart(userId, productId, quantity, customizations);
+
+            // Respond with the updated cart
+            return res.status(200).json({
+                success: true,
+                message: 'Item added to cart successfully',
+                cart
+            });
         } catch (error) {
-            res.status(500).json({ message: 'Server error', error: error.message });
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     }
 
@@ -55,30 +87,58 @@ class CartController {
 // Controller for updating cart item
 static async updateCartItem(req, res) {
     try {
-        const { productId, quantity } = req.body;
         const userId = req.userId;
+        const { productId, quantity, customizations } = req.body;
 
-        // Validation: Ensure productId and quantity are valid
-        if (!productId) {
-            return res.status(400).json({ message: 'Product ID is required.' });
-        }
-        if (quantity < 0) {
-            return res.status(400).json({ message: 'Quantity cannot be negative.' });
-        }
-
-        // Call service to update cart item
-        const cart = await CartService.updateCartItem(userId, productId, quantity);
-        if (!cart) {
-            return res.status(400).json({ message: 'Failed to update cart item.' });
+        // Fetch the product to validate it
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
         }
 
-        res.status(200).json({ success: true, message: 'Cart item updated successfully', data: cart });
+        // Validate customizations
+        if (customizations.size && !product.sizes.includes(customizations.size)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid size: ${customizations.size}. Available sizes are: ${product.sizes.join(', ')}`
+            });
+        }
 
+        if (customizations.color && !product.colors.includes(customizations.color)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid color: ${customizations.color}. Available colors are: ${product.colors.join(', ')}`
+            });
+        }
+        //console.log("newQuantity: " + newQuantity);
+
+        // Validate stock availability
+        if (quantity > product.stock) {
+            return res.status(400).json({
+                success: false,
+                message: `Requested quantity (${quantity}) exceeds available stock (${product.stock})`
+            });
+        }
+
+        // Call the service layer to update the cart
+        const cart = await CartService.updateCartItem(userId, productId, quantity, customizations);
+
+        // Respond with the updated cart
+        return res.status(200).json({
+            success: true,
+            message: 'Cart item updated successfully',
+            cart
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 }
-
 
     // Remove an item from the cart
     static async removeCartItem(req, res) {
