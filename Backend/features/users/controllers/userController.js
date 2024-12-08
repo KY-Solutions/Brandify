@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
 const User = require('../models/user');
 const { sendEmail } = require('../../../utils/emailService');
+const analytics = require('../../analytics/services/userAnalyticsService');
 class UserController {
     //* [Method] controller method to register user and handle validation
     //* [201] created
@@ -60,6 +61,7 @@ class UserController {
                 return res.status(401).json({ success: false, message: 'Invalid email or password.' });
             }
             const token = tokenUtil.generateToken(user._id);
+          
             const refreshToken = tokenUtil.generateRefreshToken(user._id);
             // store refresh token in Browser cookie
             res.cookie('refreshToken', refreshToken, {
@@ -69,6 +71,7 @@ class UserController {
 
             })
             res.status(200).json({ success: true, message: 'Login successful.', token, data: user });
+            analytics.logUserEvent(user, "USER_ACTION", { "eventType": "login" });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
