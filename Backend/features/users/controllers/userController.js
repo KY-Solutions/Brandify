@@ -39,7 +39,7 @@ class UserController {
             //* send OTP to verify email
             await sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
             
-            return res.status(201).json({ success: true, message: 'User created successfully.',token ,data: [newUser.name,newUser.email,newUser._id] });
+            return res.status(201).json({ success: true, message: 'User created successfully.', token, data: { user: newUser.name, email: newUser.email,id: newUser._id } });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -60,7 +60,7 @@ class UserController {
                 return res.status(401).json({ success: false, message: 'Invalid email or password.' });
             }
             const token = tokenUtil.generateToken(user._id);
-            res.status(200).json({ success: true, message: 'Login successful.',token, data: user });
+            res.status(200).json({ success: true, message: 'Login successful.',token, data: { user: user.name, email: user.email,id: user._id, isverified: user.isUserVerified } });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -78,7 +78,7 @@ class UserController {
             if (!user) {
                 return res.status(404).json({ success: false, message: 'User not found.' });
             }
-            res.json({ success: true, message: 'User found.', data: user });
+            res.json({ success: true, message: 'User found.', data: { user: newUser.name, email: newUser.email,id: newUser._id, isverified: newUser.isUserVerified } });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -97,7 +97,7 @@ class UserController {
             if (!updatedUser) {
                 return res.status(404).json({ success: false, message: 'User not found.' });
             }
-            res.json({ success: true, data: updatedUser });
+            res.json({ success: true, data: { user: updatedUser.name, email: updatedUser.email,id: updatedUser._id, isverified: updatedUser.isUserVerified } });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
